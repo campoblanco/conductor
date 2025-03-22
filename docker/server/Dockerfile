@@ -4,7 +4,9 @@
 # ===========================================================================================================
 # 0. Builder stage
 # ===========================================================================================================
-FROM alpine:3.18 AS builder
+
+# FROM alpine:3.18 AS builder
+FROM eclipse-temurin:17-jdk-jammy AS builder
 
 LABEL maintainer="Netflix OSS <conductor@netflix.com>"
 
@@ -14,9 +16,11 @@ LABEL maintainer="Netflix OSS <conductor@netflix.com>"
 
 
 # Install dependencies
-RUN apk add openjdk17
-RUN apk add git
-RUN apk add --update nodejs npm yarn
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs git && \
+    npm install -g yarn
 
 COPY . /conductor
 WORKDIR /conductor/ui
